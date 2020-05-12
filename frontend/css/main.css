@@ -1,0 +1,313 @@
+@font-face {
+    font-family: Fascinate;
+    src: url("../fonts/Fascinate_Inline/FascinateInline-Regular.ttf");
+}
+@font-face {
+    font-family: Yatra;
+    src: url("../fonts/Yatra_One/YatraOne-Regular.ttf");
+}
+@font-face {
+    font-family: Raleway;
+    src: url("../fonts/Raleway/Raleway-Regular.ttf");
+}
+@font-face {
+    font-family: Source Code;
+    src: url("../fonts/Source_Code_Pro/SourceCodePro-Regular.ttf");
+}
+
+div {
+    font-family: 'Raleway';
+}
+
+img.logo-img {
+    float: left;
+    height: 5vh;
+    width: auto;
+}
+a.logo-a {
+    float: none;
+    font-family: 'Fascinate';
+    vertical-align: middle;
+    margin-top: 2vh;
+    color: black;
+    font-size: xx-large;
+}
+a.logo-a.no-tab {
+    margin: 0px;
+}
+a.logo-a.alt {
+    color: white !important;
+}
+a.logo-a:hover {
+    text-decoration: none;
+}
+div.logo {
+    vertical-align: middle;
+    background: rgb(255,220,230,0.3);
+}
+div.logo.alt {
+    vertical-align: middle;
+    background: rgb(200,175,150,0.5);
+}
+
+div.menu-col {
+    text-align: right;
+    font-family: 'Raleway';
+    text-align: right !important;
+    right: 0;
+}
+div.menu-col a {
+    color: black;
+}
+div.menu-col a:hover {
+    color: #007bff;
+    text-decoration: none;
+}
+
+body {
+    font-family: 'Raleway';
+}
+
+.tab {
+    margin-left: 1%;
+}
+.tab-right {
+    margin-right: 1%;
+}
+.tab-top {
+    margin-top: 1%;
+}
+
+.bg-home {
+    background-image: url('../images/red-blue-vinyls.jpg');
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    position: fixed;
+    height: 100% !important;
+    width: 100% !important;
+}
+.bg-cart {
+    background-image: url('../images/background-lps.jpg');
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    position: fixed;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.text-dark {
+    font-weight: lighter;
+}
+
+.h-title {
+    font-family: 'Yatra';
+    font-weight: bold;
+}
+
+#content {
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+.cont {
+    margin-top: 5%;
+    font-family: 'Raleway';
+}
+
+.title-lg {
+    font-family: 'Fascinate';
+    font-size: 620%;
+}
+
+p {
+    font-size: large;
+}
+
+.code {
+    font-family: 'Source Code';
+}
+.no-deco:hover {
+    text-decoration: none;
+}
+
+.btn-round {
+    border-radius: 30px !important;
+    border-color: transparent !important;
+    font-weight: bold;
+    font-size: xx-large !important;
+    width: 65%;
+}
+.btn-round.alt {
+    width: 15%;
+    border-color: #f0ad4e !important;
+    font-weight: bold;
+    background: rgb(100,80,50,0.7);
+}
+.btn-round.btn-sm {
+    font-size: medium !important;
+    font-weight: bold;
+}
+
+.bottom-text {
+    position: fixed; bottom: 0; width:100%; text-align: center
+}
+
+.card {
+    max-width: 15rem;
+    margin: 2%;
+    text-align: center !important;
+    justify-content: space-evenly;
+    color: teal;
+}
+
+.cover-img {
+    width: 15rem;
+    max-height: 18rem;
+    text-align: center;
+}
+.cover-img:hover {
+    cursor: pointer;
+    -webkit-filter: blur(3px); /* Safari 6.0 - 9.0 */
+    filter: blur(3px);
+}
+
+.cover-img-alt {
+    width: 10rem;
+    max-height: 13rem;
+    text-align: center;
+}
+.cover-img-alt:hover {
+    cursor: pointer;
+    -webkit-filter: blur(2px); /* Safari 6.0 - 9.0 */
+    filter: blur(2px);
+}
+
+.catalog {
+    overflow-y: auto;
+    overflow-x: auto;
+    justify-content: center;
+    position: relative;
+    height: 85% !important;
+    width: 100%;
+}
+.catalog-less {
+    overflow-y: auto;
+    overflow-x: auto;
+    justify-content: center;
+    position: relative;
+    height: 55% !important;
+    width: 100%;
+}
+
+.x-bold-text {
+    font-weight: 900;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.bg-medium-danger {
+    background-color: rgb(255, 215, 215);
+}
+.bg-medium-danger:hover {
+    font-weight: bold !important;
+    background-color: rgb(233, 199, 199);
+}
+
+.btn-toggle {
+    border: 1px solid;
+    padding: 20%;
+    border-radius: 30px;
+}
+
+.btn-danger:hover {
+    font-weight: bold;
+}
+
+.product {
+    margin: 1vw;
+    border-radius: 20px;
+    border: 1px solid white;
+}
+.prod-cont {
+    margin: 1%;
+}
+
+.dark-shadow {
+    text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+    font-weight: bold;
+}
+.x-dark-shadow {
+    text-shadow: 2px 4px 3px rgba(0,0,0,0.7);
+    font-weight: bold;
+}
+
+.btn-transparent {
+    background: transparent;
+    border: transparent;
+    border-radius: 50%;
+    color: white;
+    font-size: large;
+    font-weight: 900;
+}
+.btn-transparent:hover {
+    background: rgb(100,100,100,0.5) !important;
+}
+
+.bg-login {
+    background-image: url('../images/record-bg.jpg');
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    position: fixed;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.all-tab {
+    margin: 1vw;
+}
+
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one :-)       */
+  
+    display: flex;
+    align-items: center;
+}
+
+.bg-lightish {
+    background: rgb(250,250,250,0.85) !important;
+    height: 100%;
+    width: 35% !important;
+    text-align: center;
+    margin-top: -5vh;
+    font-size: large;
+}
+
+input.transparent {
+    background: transparent !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-bottom: 1px solid grey !important;
+} 
+
+.btn-round.small {
+    width: 25% !important;
+    font-size: larger !important;
+    font-weight: bold !important;
+    border: thin #0275d8 solid !important;
+}
+.btn-round.small.info {
+    border: thin #5bc0de solid !important;
+}
+
+.disabled:hover {
+    cursor: not-allowed !important;
+}
+
+a i.fa-sign-out-alt {
+    cursor: pointer;
+}

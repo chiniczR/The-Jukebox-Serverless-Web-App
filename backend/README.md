@@ -1,0 +1,1 @@
+Consists of node.js files, each of which exports one handler function. These handlers are to be used as Lambda functions to provide the backend functionalities. 

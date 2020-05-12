@@ -1,0 +1,1 @@
+Consists of HTML+CSS pages, with JavaScript files to support basic functionality, as well as an "inventory" directory, with a JavaScript file with a single stringified JSON product list, and a sub-directory with product images (album covers).

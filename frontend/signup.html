@@ -1,0 +1,88 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Jukebox | My Cart</title>
+    <link rel="stylesheet" href="font-awesome/fontawesome-free-5.13.0-web/css/all.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/aws-cognito-sdk.min.js"></script>
+    <script src="js/amazon-cognito-identity.min.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/signup.js"></script>
+</head>
+
+<body class="bg-login text-light">
+    <div class="container-fluid">
+        <div class="row logo">
+            <div class="col-4 logo-col">
+                <img id="leLogo" class="logo-img" src="./images/logo.png"/>
+                <a class="logo-a" href="./index.html">The Jukebox</a>
+            </div>
+            <div class="col-4">
+                <nav class="navbar small-text text-secondary tab-top justify-content-center">
+                    <h6 id="greeting"></h6>
+                </nav>
+            </div>
+            <div class="col-4 menu-col">
+                <nav class="navbar navbar-expand-sm justify-content-end">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
+                        <ul class="navbar-nav text-right">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./index.html">HOME</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./catalog.html">CATALOG</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./cart.html">MY CART </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="container-fluid vertical-center">
+            <div class="container bg-lightish text-dark">
+                <div class="container row all-tab">
+                    <img id="leLogo" class="logo-img" src="./images/logo.png"/>
+                    <a class="logo-a no-tab" href="./index.html">The Jukebox</a>
+                </div>
+                <form id="registrationForm" onsubmit="handleRegister(event)">
+                    <div class="form-group all-tab">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control transparent" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                    <div class="form-group all-tab">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control transparent" id="exampleInputPassword1">
+                    </div>
+                    <div class="form-group all-tab">
+                        <label for="exampleConfirmPassword1">Confirm Password</label>
+                        <input type="password" class="form-control transparent" id="exampleConfirmPassword1">
+                    </div>
+                    <p class="all-tab">Already have an account? <a href="./login.html">Click here to login!</a></p>
+                    <button type="submit" class="btn btn-outline-primary btn-round small all-tab">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        <div>
+            <p class="text-light code bottom-text"> Developed by Rebeca Chinicz
+                <a class="no-deco dark-shadow" href="https://www.github.com/chiniczr"><i class="fab fa-github-alt"></i></a>
+                <a class="no-deco dark-shadow" href="https://www.linkedin.com/in/rebeca-c"><i class="fab fa-linkedin"></i></a>
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

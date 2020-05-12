@@ -1,0 +1,99 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Jukebox | Home</title>
+    <link rel="stylesheet" href="font-awesome/fontawesome-free-5.13.0-web/css/all.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="js/jquery-3.5.0.min.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/aws-cognito-sdk.min.js"></script>
+    <script src="js/amazon-cognito-identity.min.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+    <script type="text/javascript" src="js/home.js"></script>
+</head>
+
+<body class="bg-home">
+    <div class="container-fluid">
+        <div class="row logo">
+            <div class="col-4 logo-col">
+                <img id="leLogo" class="logo-img" src="./images/logo.png"/>
+                <a class="logo-a" href="./index.html">The Jukebox</a>
+            </div>
+            <div class="col-4">
+                <nav class="navbar small-text text-secondary tab-top justify-content-center">
+                    <h6 id="greeting">Not logged in</h6>
+                </nav>
+            </div>
+            <div class="col-4 menu-col">
+                <nav class="navbar navbar-expand-sm justify-content-end">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
+                        <ul class="navbar-nav text-right">
+                            <li class="nav-item">
+                                <a class="nav-link" href="./index.html">HOME</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./catalog.html">CATALOG</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="./cart.html">MY CART </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="content">
+        <div class="text-light cont">
+            <h2 class="h-title x-dark-shadow">LOVE MUSIC?</h2>
+            <h4>So do we!</h4>
+            <br/>
+            <h5>Check out our awesome catalog for some of<br/>the greatest albums in history, only at</h5>
+            <br/><br/>
+            <h1 class="title-lg">The Jukebox</h1>
+            <br/><br/>
+            <h3>What are you waiting for?</h3>
+            <br />
+            <div class="row">
+                <div class="col-5">
+                    <h5>Register here</h5>
+                    <button id="signupBtn" type="button" class="btn-outline-primary btn-lg btn-round" onclick="loginClick()">Sign Up</button>
+                </div>
+                <div class="col-2">
+                    <h5>OR</h5>
+                </div>
+                <div class="col-5">
+                    <h5>Start browsing now</h5>
+                    <button onclick="catalogClick()" class="btn-outline-danger btn-lg btn-round">Catalog</button>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div>
+        <p class="text-dark code bottom-text"> Developed by Rebeca Chinicz
+            <a class="no-deco" href="https://www.github.com/chiniczr"><i class="fab fa-github-alt"></i></a>
+            <a class="no-deco" href="https://www.linkedin.com/in/rebeca-c"><i class="fab fa-linkedin"></i></a>
+        </p>
+    </div>
+    <script type="text/javascript">
+        function catalogClick() {
+            window.location.assign('./catalog.html')
+        }
+        function loginClick() {
+            window.location.assign('./signup.html')
+        }
+    </script>
+</body>
+
+</html>

@@ -1,1 +1,1 @@
-## The Jukebox - a Serverless Web App
+## The Jukebox - A Serverless Web App

@@ -115,6 +115,10 @@ else {
                                 alert('An error occured when adding item to cart:\n' + JSON.stringify(jqXHR));
                             }
                         });
+                        delete params["AttributesToGet"]
+                        ddb.deleteItem(params, function(err1, data1) {
+                            if (err1) alert("An error occured when clearing guest cart:\n" + err1)
+                        })
                     }
                 });
             }, 100);

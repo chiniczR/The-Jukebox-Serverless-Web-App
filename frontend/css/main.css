@@ -311,3 +311,7 @@ input.transparent {
 a i.fa-sign-out-alt {
     cursor: pointer;
 }
+
+.no-show {
+    display: none;
+}

@@ -20,9 +20,8 @@ exports.handler = (event, context, callback) => {
     // header first and use a different parsing strategy based on that value.
     const requestBody = JSON.parse(event.body);
 
-    const itemId = requestBody.ItemID
+    const items = requestBody.Items
 
-    var cart = [ itemId.toString() ]
     console.log("Going to look for username: ", username)
     ddb.getItem({
         Key: {
@@ -34,21 +33,17 @@ exports.handler = (event, context, callback) => {
         ]
     },
     (err, data) => {
+        var cart = items
         if (err) errorResponse(err.message, context.awsRequestId, callback)
         else if (data['Item']) {
             var currCart = data["Item"]["CartItems"]["NS"]
             cart = currCart.toString().split(',');
-            if (cart.includes(itemId.toString())) { 
-                console.log('Item with ID=', itemId, ' is already in the cart of user=', username)
-                callback(null, {
-                    statusCode: 201,
-                    body: JSON.stringify({}),
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                    },
-                });
-            }
-            cart.push(itemId.toString());
+            items.forEach(itemId => {
+                if (cart.includes(itemId.toString())) { 
+                    console.log('Item with ID=', itemId, ' is already in the cart of user=', username)
+                }
+                cart.push(itemId.toString());
+            });
             ddb.updateItem({
                 TableName: "JukeboxUserCarts",
                 Key: { Username: { S: username } },
@@ -61,14 +56,7 @@ exports.handler = (event, context, callback) => {
             (err1, data1) => {
                 if (err1) errorResponse(err1.message, context.awsRequestId, callback)
                 else {
-                    console.log('Updated:\n', JSON.stringify(data1))
-                    callback(null, {
-                        statusCode: 201,
-                        body: JSON.stringify({}),
-                        headers: {
-                            'Access-Control-Allow-Origin': '*',
-                        },
-                    }); 
+                    console.log("Inserted items=" + items + " in user=" + username + "'s cart")
                 }
             })
         }
@@ -84,18 +72,19 @@ exports.handler = (event, context, callback) => {
             (err2, data2) => {
                 if (err2) errorResponse(err2.message, context.awsRequestId, callback)
                 else {
-                    console.log('Put item with ID=', itemId, ' into the cart of user=', username)
-                    callback(null, {
-                        statusCode: 201,
-                        body: JSON.stringify({}),
-                        headers: {
-                            'Access-Control-Allow-Origin': '*',
-                        },
-                    }); 
+                    console.log('Put items=', items, ' into the cart of user=', username)
                 }
             })
         }
-    })
+        console.log('Cart insertion successfully finished')
+        callback(null, {
+            statusCode: 201,
+            body: JSON.stringify({}),
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+        });
+    });
 }
 
 function errorResponse(errorMessage, awsRequestId, callback) {

@@ -89,7 +89,7 @@ function handleSignin(event) {
     var password = document.getElementById('exampleInputPassword1').value;
     
     var onSuccess = function signinSuccess() {
-        alert('Successfully Logged In');
+        alert('Successfully Logged In\nYou will now be redirected to your cart.');
         window.location.href = 'cart.html';
     }
     var onFailure = function signinError(err) {

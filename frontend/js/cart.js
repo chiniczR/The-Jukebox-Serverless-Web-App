@@ -34,6 +34,7 @@ else {
 
     function signOut() {
         userPool.getCurrentUser().signOut();
+        window.location.reload()
     };
 
     authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {

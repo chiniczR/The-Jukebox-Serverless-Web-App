@@ -8,7 +8,7 @@ var poolData = {
 // Retrieve (parse) the items from the inventory file products.js and display them
 var products = JSON.parse(data)
 
-var userPool, authToken, username;
+var userPool, authToken, username, identityId, ddb;
 
 function changeLoginBtn() {
     var loginBtn = document.getElementById('loginBtn')
@@ -37,6 +37,7 @@ else {
 
     function signOut() {
         userPool.getCurrentUser().signOut();
+        window.location.reload()
     };
 
     authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
@@ -66,7 +67,41 @@ else {
             setTimeout(() => {
                 changeLoginBtn()
                 document.getElementById('greeting').textContent = 'Logged in as ' + username
-                setDisplay(false)
+                
+                setDisplay(false)   // false => Not a guest user
+
+                const headers = {
+                    Authorization: at // The received authentication token
+                }
+                const url = _config.api.invokeUrl + '/getcart'
+                $.ajax({
+                    method: 'GET',
+                    url: url,
+                    headers: headers,
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
+                        console.error('Response: ', jqXHR.responseText);
+                        alert('An error occured when adding item to cart:\n' + JSON.stringify(jqXHR));
+                    },
+                    success: function(response) {
+                        var cart = response.CartItems
+                        products.forEach(item => {
+                            // If the product is in the user's cart ...
+                            if (cart.includes(item.ItemID)) {
+                                // ... Change the display to indicate so
+                                var button = document.getElementById('btnFor' + item.ItemID)
+                                var plus = button.children.item(0)
+                                button.classList.remove('bg-medium-danger')
+                                button.classList.remove('text-right')
+                                button.classList.add('btn-danger')
+                                button.classList.add('text-left')
+                                plus.classList.remove('fa-plus')
+                                plus.classList.add('fa-check')
+                                button.setAttribute("title", "Remove from cart")
+                            }
+                        })
+                    }
+                });
             }, 100);
         }
         else {
@@ -78,12 +113,12 @@ else {
                 });
 
                 // Getting the current user's guest IdentityID (whether logged in or not)
-                var identityId = AWS.config.credentials.identityId;
+                identityId = AWS.config.credentials.identityId;
 
                 // Create the DynamoDB service object
-                var ddb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
+                ddb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
 
-                setDisplay(true)
+                setDisplay(true)    // true => Guest user
 
                 // Here we contact the DynamoDB table for session (i.e. cart) management
                 // Set the params to request the user's current stored cart
@@ -103,7 +138,7 @@ else {
                 ddb.getItem(params, function (err, data) {
                     if (err) alert(err + '\n' + err.getMessage()); // An error occurred
                     else {
-                        // Get the list of items already in the cart
+                        // Get the list of items already in the guest's cart
                         var cart = data["Item"]["CartItems"]["NS"]
                         products.forEach(item => {
                             // If the product is in the cart ...
@@ -131,6 +166,7 @@ else {
 }
 
 function addToGuestCart(item) {
+    var currCart;
     var findCart = {
         Key: {
             "IdentityID": {
@@ -146,7 +182,7 @@ function addToGuestCart(item) {
         if (err) alert(err + '\n' + err.getMessage()); // An error occurred
         // If a cart is found, add the product ID to it and send an update request 
         else if (data["Item"]) {
-            var currCart = data["Item"]["CartItems"]["NS"]
+            currCart = data["Item"]["CartItems"]["NS"]
             var newCart = currCart.toString().split(',')
             newCart.push(item.ItemID.toString())
             var toUpdate = {
@@ -186,60 +222,23 @@ function addToGuestCart(item) {
 }
 
 function addToUserCart(item) {
-    //#region  TEMPORARILY the same as addToGuestCart (for test purposes)
-    var findCart = {
-        Key: {
-            "IdentityID": {
-                S: identityId
-            }
-        },
-        TableName: "JukeboxGuestCarts",
-        AttributesToGet: [
-            'CartItems'
-        ]
+    const headers = {
+        Authorization: at // The received authentication token
     }
-    ddb.getItem(findCart, function (err, data) {
-        if (err) alert(err + '\n' + err.getMessage()); // An error occurred
-        // If a cart is found, add the product ID to it and send an update request 
-        else if (data["Item"]) {
-            var currCart = data["Item"]["CartItems"]["NS"]
-            var newCart = currCart.toString().split(',')
-            newCart.push(item.ItemID.toString())
-            var toUpdate = {
-                TableName: "JukeboxGuestCarts",
-                Key: { IdentityID: { S: identityId } },
-                UpdateExpression: "SET CartItems = :c",
-                ExpressionAttributeValues: {
-                    ":c": { NS: newCart }
-                },
-                ReturnValues: "UPDATED_NEW"
-            }
-            ddb.updateItem(toUpdate, function (err, doot) {
-                if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully updated item:\n' + JSON.stringify(doot));
-                }
-            })
+    const url = _config.api.invokeUrl + '/addcartitem'
+    $.ajax({
+        method: 'POST',
+        url: url,
+        headers: headers,
+        data: JSON.stringify({
+            ItemID: item.ItemID
+        }),
+        error: function ajaxError(jqXHR, textStatus, errorThrown) {
+            console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
+            console.error('Response: ', jqXHR.responseText);
+            alert('An error occured when adding item to cart:\n' + JSON.stringify(jqXHR));
         }
-        // If this is the first product the user's selected, create a cart for them
-        else {
-            currCart = [item.ItemID.toString()]
-            var toWrite = {
-                TableName: "JukeboxGuestCarts",
-                Item: {
-                    IdentityID: { S: identityId },
-                    CartItems: { NS: currCart }
-                }
-            }
-            ddb.putItem(toWrite, function (err, doot) {
-                if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully wrote item to cart:\n' + JSON.stringify(doot));
-                }
-            })
-        }
-    })
-    //#endregion
+    });
 }
 
 function removeFromGuestCart(item) {
@@ -279,45 +278,26 @@ function removeFromGuestCart(item) {
     })
 }
 function removeFromUserCart(item) {
-    //#region  TEMPORARILY the same as removeToGuestCart (for test purposes)
-    var findCart = {
-        Key: {
-            "IdentityID": {
-                S: identityId
-            }
-        },
-        TableName: "JukeboxGuestCarts",
-        AttributesToGet: [
-            'CartItems'
-        ]
+    const headers = {
+        Authorization: at // The received authentication token
     }
-    ddb.getItem(findCart, function (err, data) {
-        if (err) alert(err + '\n' + err.getMessage()); // An error occurred
-        else {
-            // 2.2 Update the user's cart to remove the selected product
-            var currCart = data["Item"]["CartItems"]["NS"]
-            var newCart = currCart.toString().split(',').filter(i => i.toString() != item.ItemID.toString())
-            var toUpdate = {
-                TableName: "JukeboxGuestCarts",
-                Key: { IdentityID: { S: identityId } },
-                UpdateExpression: "SET CartItems = :c",
-                ExpressionAttributeValues: {
-                    ":c": { NS: newCart }
-                },
-                ReturnValues: "UPDATED_NEW"
-            }
-            ddb.updateItem(toUpdate, function (err, doot) {
-                if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully updated item:\n' + JSON.stringify(doot));
-                }
-            })
+    const url = _config.api.invokeUrl + '/removecartitem'
+    $.ajax({
+        method: 'POST',
+        url: url,
+        headers: headers,
+        data: JSON.stringify({
+            ItemID: item.ItemID
+        }),
+        error: function ajaxError(jqXHR, textStatus, errorThrown) {
+            console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
+            console.error('Response: ', jqXHR.responseText);
+            alert('An error occured when removing item from cart:\n' + JSON.stringify(jqXHR));
         }
-    })
-    //#endregion
+    });
 }
 
-function setDisplayAddedItem(button) {
+function setDisplayAddedItem(button, plus) {
     button.classList.remove('bg-medium-danger')
     button.classList.remove('text-right')
     button.classList.add('btn-danger')
@@ -327,7 +307,7 @@ function setDisplayAddedItem(button) {
     button.setAttribute("title", "Remove from cart")
 }
 
-function setDisplayRemovedItem(button) {
+function setDisplayRemovedItem(button, plus) {
     button.classList.add('bg-medium-danger')
     button.classList.add('text-right')
     button.classList.remove('btn-danger')
@@ -389,7 +369,7 @@ function setDisplay(guest) {
             // If the item wasn't in the cart (and should now be)
             if (button.classList.contains('bg-medium-danger')) {
                 // 1. Set the display to indicate that the item has been added
-                setDisplayAddedItem(button)
+                setDisplayAddedItem(button, plus)
                 // 2. Request to set the user's cart with this item
                 // 2.1 Attempt to find the user's cart
                 if (guest) {
@@ -402,7 +382,7 @@ function setDisplay(guest) {
             // Else, if it was in the cart (and shouldn't be anymore)
             else {
                 // 1. Set the display to indicate the item is no longer in the cart
-                setDisplayRemovedItem(button)
+                setDisplayRemovedItem(button, plus)
                 // 2. Send the request to update the user's cart removing the item from it
                 // 2.1. Find the user's cart
                 if (guest) {

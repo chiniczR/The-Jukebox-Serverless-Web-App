@@ -33,8 +33,8 @@ else {
     }
 
     function signOut() {
-        document.getElementById("greeting").textContent = 'Not logged in'
         userPool.getCurrentUser().signOut();
+        window.location.reload()
     };
 
     authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {

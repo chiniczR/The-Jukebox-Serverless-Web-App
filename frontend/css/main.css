@@ -142,7 +142,7 @@ p {
     width: 15%;
     border-color: #f0ad4e !important;
     font-weight: bold;
-    background: rgb(100,80,50,0.7);
+    background: transparent;
 }
 .btn-round.btn-sm {
     font-size: medium !important;

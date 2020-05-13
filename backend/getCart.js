@@ -17,7 +17,7 @@ exports.handler = (event, context, callback) => {
     console.log("Going to look for username=", username, "'s cart")
     ddb.getItem({
         Key: {
-            "Username": { S: username}
+            "Username": { S: username }
         },
         TableName: "JukeboxUserCarts",
         AttributesToGet: [

@@ -5,19 +5,22 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>The Jukebox | My Cart</title>
+    <title>The Jukebox | Home</title>
     <link rel="icon" type="image/png" href="./favico.ico">
     <link rel="stylesheet" href="font-awesome/fontawesome-free-5.13.0-web/css/all.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="js/jquery-3.5.0.min.js"></script>
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.5.0.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.668.0.min.js"></script>
     <script src="js/aws-cognito-sdk.min.js"></script>
     <script src="js/amazon-cognito-identity.min.js"></script>
     <script type="text/javascript" src="js/config.js"></script>
-    <script type="text/javascript" src="js/signup.js"></script>
+    <script type="text/javascript" src="js/home.js"></script>
 </head>
 
-<body class="bg-login text-light">
+<body class="bg-home">
     <div class="container-fluid">
         <div class="row logo">
             <div class="col-4 logo-col">
@@ -26,7 +29,7 @@
             </div>
             <div class="col-4">
                 <nav class="navbar small-text text-secondary tab-top justify-content-center">
-                    <h6 id="greeting"></h6>
+                    <h6 id="greeting">Not logged in</h6>
                 </nav>
             </div>
             <div class="col-4 menu-col">
@@ -46,43 +49,24 @@
                                 <a class="nav-link" href="./cart.html">MY CART </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>
+                                <a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>
                             </li>
                         </ul>
                     </div>
                 </nav>
             </div>
         </div>
-        <div class="container-fluid vertical-center">
-            <div class="container bg-lightish text-dark">
-                <div class="container row all-tab">
-                    <img id="leLogo" class="logo-img" src="./images/logo.png"/>
-                    <a class="logo-a no-tab" href="./index.html">The Jukebox</a>
-                </div>
-                <form id="registrationForm" onsubmit="handleRegister(event)">
-                    <div class="form-group all-tab">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="email" class="form-control transparent" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    </div>
-                    <div class="form-group all-tab">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control transparent" id="exampleInputPassword1">
-                    </div>
-                    <div class="form-group all-tab">
-                        <label for="exampleConfirmPassword1">Confirm Password</label>
-                        <input type="password" class="form-control transparent" id="exampleConfirmPassword1">
-                    </div>
-                    <p class="all-tab">Already have an account? <a href="./login.html">Click here to login!</a></p>
-                    <button type="submit" class="btn btn-outline-primary btn-round small all-tab">Sign Up</button>
-                </form>
-            </div>
+    </div>
+    <div class="container" id="content">
+        <div class="text-light cont">
+            <h2 class="h-title x-dark-shadow">SOMETHING WENT WRONG...</h2>           
         </div>
-        <div>
-            <p class="text-light code bottom-text"> Developed by Rebeca Chinicz
-                <a class="no-deco dark-shadow" href="https://www.github.com/chiniczr"><i class="fab fa-github-alt"></i></a>
-                <a class="no-deco dark-shadow" href="https://www.linkedin.com/in/rebeca-c"><i class="fab fa-linkedin"></i></a>
-            </p>
-        </div>
+    </div>
+    <div>
+        <p class="text-dark code bottom-text"> Developed by Rebeca Chinicz
+            <a class="no-deco" href="https://www.github.com/chiniczr"><i class="fab fa-github-alt"></i></a>
+            <a class="no-deco" href="https://www.linkedin.com/in/rebeca-c"><i class="fab fa-linkedin"></i></a>
+        </p>
     </div>
 </body>
 

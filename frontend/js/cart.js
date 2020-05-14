@@ -139,6 +139,13 @@ function clearLoadingDisplay() {
 
 function setDisplay(cart, guest) {
     var cont = document.getElementById('cont')
+    if (cart.length < 1) {
+        var cont = document.getElementById('cont')
+        var h3 = document.createElement('h3')
+        h3.classList.add('dark-shadow')
+        h3.textContent = "Your cart is empty!"
+        cont.appendChild(h3)
+    }
     var total = 0.0 // Store the purchase's total
     cart.forEach(i => {
         // Find the item in the inventory, by its ID

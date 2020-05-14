@@ -1,6 +1,6 @@
-var at;
+var at; // Authorization Token to be received from Cognito if there is a user logged in
 
-var poolData = {
+var poolData = {    // Cognito user pool data
     UserPoolId: _config.cognito.userPoolId,
     ClientId: _config.cognito.userPoolClientId
 };
@@ -10,19 +10,7 @@ var products = JSON.parse(data)
 
 var userPool, authToken, username, identityId, ddb;
 
-function changeLoginBtn() {
-    var loginBtn = document.getElementById('loginBtn')
-    loginBtn.textContent = 'Logout  '
-    var icon = document.createElement('i')
-    icon.classList.add('fas', 'fa-sign-out-alt')
-    loginBtn.appendChild(icon)
-    loginBtn.onclick = (event) => {
-        event.preventDefault();
-        loginBtn.outerHTML = '<a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>'
-        signOut();
-    }
-}
-
+// Cognito must be configured for the site to work properly
 if (!(_config.cognito.userPoolId &&
     _config.cognito.userPoolClientId &&
     _config.cognito.region)) {
@@ -40,31 +28,34 @@ else {
         window.location.reload()
     };
 
+    // Go check with Cognito if there is a user currently logged in here
     authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
         if (cognitoUser) {
             if (cognitoUser.username) {
-                // alert('Found user: ' + cognitoUser.username)
                 username = cognitoUser.username
             }
             cognitoUser.getSession(function sessionCallback(err, session) {
                 if (err) {
                     reject(err);
-                } else if (!session.isValid()) {
+                } 
+                else if (!session.isValid()) {
                     resolve(null);
-                } else {
+                } 
+                else {
                     resolve(session.getIdToken().getJwtToken());
                 }
             });
-        } else {
+        } 
+        else {    // If there is no user logged in here
             resolve(null);
         }
     });
-
+    // Run the above check and then:
     authToken.then(function setAuthToken(token) {
-        if (token) {
+        if (token) {    // If we got a token => there is a user logged in
             at = token
-            setTimeout(() => {
+            setTimeout(() => {  // Give the document time to load
                 changeLoginBtn()
                 document.getElementById('greeting').textContent = 'Logged in as ' + username
                 
@@ -79,8 +70,6 @@ else {
                     url: url,
                     headers: headers,
                     error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                        console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
-                        console.error('Response: ', jqXHR.responseText);
                         alert('An error occured when adding item to cart:\n' + JSON.stringify(jqXHR));
                     },
                     success: function(response) {
@@ -105,14 +94,14 @@ else {
             }, 100);
         }
         else {
-            setTimeout(() => {
+            setTimeout(() => {  // Give the document time to load
                 // Initialize the Amazon Cognito credentials provider
                 AWS.config.region = 'us-east-2'; // Region
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                     IdentityPoolId: 'us-east-2:be4d13f7-7fc3-4b9d-b0b1-ab448dd7271b',
                 });
 
-                // Getting the current user's guest IdentityID (whether logged in or not)
+                // Getting the current guest's IdentityID
                 identityId = AWS.config.credentials.identityId;
 
                 // Create the DynamoDB service object
@@ -133,7 +122,6 @@ else {
                         'CartItems'
                     ]
                 };
-
                 // Make the request
                 ddb.getItem(params, function (err, data) {
                     if (err) alert(err + '\n' + err.getMessage()); // An error occurred
@@ -196,9 +184,9 @@ function addToGuestCart(item) {
             }
             ddb.updateItem(toUpdate, function (err, doot) {
                 if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully updated item:\n' + JSON.stringify(doot));
-                }
+                // else {
+                //     alert('Successfully updated item:\n' + JSON.stringify(doot));
+                // }
             })
         }
         // If this is the first product the user's selected, create a cart for them
@@ -213,9 +201,9 @@ function addToGuestCart(item) {
             }
             ddb.putItem(toWrite, function (err, doot) {
                 if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully wrote item to cart:\n' + JSON.stringify(doot));
-                }
+                // else {
+                //     alert('Successfully wrote item to cart:\n' + JSON.stringify(doot));
+                // }
             })
         }
     })
@@ -234,8 +222,6 @@ function addToUserCart(item) {
             ItemID: item.ItemID
         }),
         error: function ajaxError(jqXHR, textStatus, errorThrown) {
-            console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
-            console.error('Response: ', jqXHR.responseText);
             alert('An error occured when adding item to cart:\n' + JSON.stringify(jqXHR));
         }
     });
@@ -270,9 +256,9 @@ function removeFromGuestCart(item) {
             }
             ddb.updateItem(toUpdate, function (err, doot) {
                 if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully updated item:\n' + JSON.stringify(doot));
-                }
+                // else {
+                //     alert('Successfully updated item:\n' + JSON.stringify(doot));
+                // }
             })
         }
     })
@@ -290,8 +276,6 @@ function removeFromUserCart(item) {
             ItemID: item.ItemID
         }),
         error: function ajaxError(jqXHR, textStatus, errorThrown) {
-            console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
-            console.error('Response: ', jqXHR.responseText);
             alert('An error occured when removing item from cart:\n' + JSON.stringify(jqXHR));
         }
     });
@@ -371,7 +355,6 @@ function setDisplay(guest) {
                 // 1. Set the display to indicate that the item has been added
                 setDisplayAddedItem(button, plus)
                 // 2. Request to set the user's cart with this item
-                // 2.1 Attempt to find the user's cart
                 if (guest) {
                     addToGuestCart(item)
                 }
@@ -384,7 +367,6 @@ function setDisplay(guest) {
                 // 1. Set the display to indicate the item is no longer in the cart
                 setDisplayRemovedItem(button, plus)
                 // 2. Send the request to update the user's cart removing the item from it
-                // 2.1. Find the user's cart
                 if (guest) {
                     removeFromGuestCart(item)
                 }
@@ -399,4 +381,17 @@ function setDisplay(guest) {
         card.appendChild(body)
         document.getElementById('content').appendChild(card)
     });
+}
+
+function changeLoginBtn() {
+    var loginBtn = document.getElementById('loginBtn')
+    loginBtn.textContent = 'Logout  '
+    var icon = document.createElement('i')
+    icon.classList.add('fas', 'fa-sign-out-alt')
+    loginBtn.appendChild(icon)
+    loginBtn.onclick = (event) => {
+        event.preventDefault();
+        loginBtn.outerHTML = '<a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>'
+        signOut();
+    }
 }

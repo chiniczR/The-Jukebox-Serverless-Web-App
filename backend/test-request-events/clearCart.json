@@ -1,0 +1,17 @@
+{
+    "path": "/clearCart",
+    "httpMethod": "GET",
+    "headers": {
+      "Accept": "*/*",
+      "Authorization": "eyJraWQiOiJLTzRVMWZs"
+    },
+    "queryStringParameters": null,
+    "pathParameters": null,
+    "requestContext": {
+      "authorizer": {
+        "claims": {
+          "cognito:username": "example@lemail.com"
+        }
+      }
+    }
+  }

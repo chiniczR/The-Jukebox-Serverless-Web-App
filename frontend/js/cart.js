@@ -1,6 +1,6 @@
-var at;
+var at; // Authorization Token to be received from Cognito if there is a user logged in
 
-var poolData = {
+var poolData = {    // Cognito user pool data
     UserPoolId: _config.cognito.userPoolId,
     ClientId: _config.cognito.userPoolClientId
 };
@@ -10,19 +10,7 @@ var userPool, authToken, username, ddb, identityId;
 // Retrieve (parse) the items from the inventory file products.js and display them
 var products = JSON.parse(data)
 
-function changeLoginBtn() {
-    var loginBtn = document.getElementById('loginBtn')
-    loginBtn.textContent = 'Logout  '
-    var icon = document.createElement('i')
-    icon.classList.add('fas', 'fa-sign-out-alt')
-    loginBtn.appendChild(icon)
-    loginBtn.onclick = (event) => {
-        event.preventDefault();
-        loginBtn.outerHTML = '<a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>'
-        signOut();
-    }
-}
-
+// Cognito must be configured for the site to work properly
 if (!(_config.cognito.userPoolId &&
     _config.cognito.userPoolClientId &&
     _config.cognito.region)) {
@@ -40,33 +28,38 @@ else {
         window.location.reload()
     };
 
+    // Go check with Cognito if there is a user currently logged in here
     authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
         if (cognitoUser) {
             if (cognitoUser.username) {
-                // alert('Found user: ' + cognitoUser.username)
                 username = cognitoUser.username
             }
             cognitoUser.getSession(function sessionCallback(err, session) {
-                if (err) {
+                if (err) {  
                     reject(err);
-                } else if (!session.isValid()) {
+                } 
+                else if (!session.isValid()) {
                     resolve(null);
-                } else {
+                } 
+                else {
                     resolve(session.getIdToken().getJwtToken());
                 }
             });
-        } else {
+        } 
+        else {    // If there is no user logged in here
             resolve(null);
         }
     });
-    
+    // Run the above check and then:
     authToken.then(function setAuthToken(token) {
-        if (token) {
+        if (token) {    // If we got a token => there is a user logged in
             at = token
             setTimeout(() => {  // Give the document time to load
                 changeLoginBtn()
+                
                 document.getElementById('greeting').textContent = 'Logged in as ' + username
+                
                 const headers = {
                     Authorization: at // The received authentication token
                 }
@@ -76,14 +69,12 @@ else {
                     url: url,
                     headers: headers,
                     error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                        console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
-                        console.error('Response: ', jqXHR.responseText);
                         alert('An error occured when retrieving the cart:\n' + JSON.stringify(jqXHR));
                     },
-                    success: function(response) {
+                    success: function success(response) {
                         clearLoadingDisplay()
                         var cart = response.CartItems
-                        setDisplay(cart, false)
+                        setDisplay(cart, false) // false => Not a guest
                     }
                 });
             }, 100);
@@ -96,7 +87,7 @@ else {
                     IdentityPoolId: 'us-east-2:be4d13f7-7fc3-4b9d-b0b1-ab448dd7271b',
                 });
 
-                // Getting the current user's guest IdentityID (whether logged in or not)
+                // Getting the current guest's IdentityID
                 identityId = AWS.config.credentials.identityId;
 
                 // Create the DynamoDB service object
@@ -148,12 +139,14 @@ function clearLoadingDisplay() {
 
 function setDisplay(cart, guest) {
     var cont = document.getElementById('cont')
-    var total = 0.0
+    var total = 0.0 // Store the purchase's total
     cart.forEach(i => {
+        // Find the item in the inventory, by its ID
         var item = products.filter(x => x.ItemID.toString() == i)[0]
+        // Create the container for the product's display
         var prod = document.createElement('div')
         prod.classList.add('product', 'container-fluid')
-        var row = document.createElement('div')
+        var row = document.createElement('div') // Row to split into cover, details & cancel-button columns
         row.classList.add('cont-prod', 'row', 'product')
         var coverCol = document.createElement('div')
         coverCol.classList.add('col-1')
@@ -170,24 +163,24 @@ function setDisplay(cart, guest) {
         coverImg.setAttribute("title", trackList)
         coverCol.appendChild(coverImg)
         row.appendChild(coverCol)
-        var restCol = document.createElement('div')
+        var restCol = document.createElement('div') // Column for the product's details
         restCol.classList.add('col-10')
-        var h4 = document.createElement('h4')
+        var h4 = document.createElement('h4')   // Album name
         h4.classList.add('dark-shadow')
         h4.textContent = item.Album
         restCol.appendChild(h4)
-        var h5 = document.createElement('h5')
+        var h5 = document.createElement('h5')   // Artist
         h5.textContent = item.Artist
         restCol.appendChild(h5)
-        var h6 = document.createElement('h6')
+        var h6 = document.createElement('h6')   // Track-list tooltip hint
         h6.textContent = "Hover over the album cover to check its track list"
         restCol.appendChild(h6)
-        var price = document.createElement('h3')
+        var price = document.createElement('h3')    // Price
         price.classList.add('text-right', 'dark-shadow')
         price.textContent = item.Price + '$'
         restCol.appendChild(price)
         row.appendChild(restCol)
-        var btnCol = document.createElement('div')
+        var btnCol = document.createElement('div')  // Column for the "remove from cart" button
         btnCol.classList.add('col-1')
         var btn = document.createElement('button')
         btn.classList.add('x-dark-shadow', 'btn-transparent')
@@ -215,18 +208,48 @@ function setDisplay(cart, guest) {
         cont.appendChild(row)
         total += item.Price
     });
-    var tot = document.createElement('h2')
+    var tot = document.createElement('h2')  // Display for the total
     tot.id = 'total'
     tot.classList.add('text-right', 'x-dark-shadow')
     tot.textContent = 'Total: ' + total.toFixed(2) + '$'
     document.getElementById('end').appendChild(tot)
-    var purchase = document.createElement('button')
+    var purchase = document.createElement('button') // Button to make purchase
     purchase.classList.add('btn', 'btn-outline-warning', 'btn-round', 'alt', 'disabled')
     if (!guest) {
         purchase.classList.remove('disabled')
         purchase.onclick = () => {
             if (confirm("Are you sure you want to make this purchase?")) {
-                
+                const headers = {
+                    Authorization: at // The received authentication token
+                }
+                var url = _config.api.invokeUrl + '/addpurchase'
+                $.ajax({
+                    method: 'POST',
+                    url: url,
+                    headers: headers,
+                    data: JSON.stringify({
+                        Items: cart,
+                        Total: total
+                    }),
+                    error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                        alert('An error occured when making the purchase:\n' + JSON.stringify(jqXHR));
+                    },
+                    success: function success(response) {
+                        url = _config.api.invokeUrl + '/clearcart'
+                        $.ajax({
+                            method: 'GET',
+                            url: url,
+                            headers: headers,
+                            error: function ajaxErr(jqXHR, textStatus, errorThrown) {
+                                alert('An error occured when clearing cart:\n' + JSON.stringify(jqXHR));
+                            },
+                            success: function succ(res) {
+                                alert("Purchase made successfully! You should be getting a confirmation email anytime now.")
+                                window.location.href = 'index.html'
+                            }
+                        });
+                    }
+                });
             }
         }
     }
@@ -267,9 +290,9 @@ function removeFromGuestCart(item) {
             }
             ddb.updateItem(toUpdate, function (err, doot) {
                 if (err) alert(err + '\n' + err.getMessage());
-                else {
-                    // alert('Successfully updated item:\n' + JSON.stringify(doot));
-                }
+                // else {
+                //     alert('Successfully updated item:\n' + JSON.stringify(doot));
+                // }
             })
         }
     })
@@ -288,9 +311,20 @@ function removeFromUserCart(item) {
             ItemID: item.ItemID
         }),
         error: function ajaxError(jqXHR, textStatus, errorThrown) {
-            console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
-            console.error('Response: ', jqXHR.responseText);
             alert('An error occured when removing item from cart:\n' + JSON.stringify(jqXHR));
         }
     });
+}
+
+function changeLoginBtn() {
+    var loginBtn = document.getElementById('loginBtn')
+    loginBtn.textContent = 'Logout  '
+    var icon = document.createElement('i')
+    icon.classList.add('fas', 'fa-sign-out-alt')
+    loginBtn.appendChild(icon)
+    loginBtn.onclick = (event) => {
+        event.preventDefault();
+        loginBtn.outerHTML = '<a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>'
+        signOut();
+    }
 }

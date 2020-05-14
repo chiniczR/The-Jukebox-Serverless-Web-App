@@ -1,3 +1,5 @@
+// Setting the user pool data - requires Cognito configuration to be set up
+// on the config.js file (and for this file to be included)
 var poolData = {
     UserPoolId: _config.cognito.userPoolId,
     ClientId: _config.cognito.userPoolClientId
@@ -5,6 +7,7 @@ var poolData = {
 
 var userPool;
 
+// We can only work here if Cognito is set up
 if (!(_config.cognito.userPoolId &&
     _config.cognito.userPoolClientId &&
     _config.cognito.region)) {
@@ -17,30 +20,29 @@ else {
         AWSCognito.config.region = _config.cognito.region;
     }
 
-    function signOut() {
-        userPool.getCurrentUser().signOut();
-    };
-
+    // Go check with Cognito if there is a user currently logged in here
     var authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
-
         if (cognitoUser) {
             cognitoUser.getSession(function sessionCallback(err, session) {
                 if (err) {
                     reject(err);
-                } else if (!session.isValid()) {
+                } 
+                else if (!session.isValid()) {
                     resolve(null);
-                } else {
+                } 
+                else {
                     resolve(session.getIdToken().getJwtToken());
                 }
             });
-        } else {
+        } 
+        else {  // If there is no user logged in here
             resolve(null);
         }
     });
+    // Run the above check and then:
     authToken.then(function setAuthToken(token) {
-        if (token) {
-            at = token
+        if (token) {    // If we got a token => there is a user logged in
             alert('You are already logged in! You must logout before accessing this page.')
             window.location.assign('./index.html')
         }
@@ -49,9 +51,7 @@ else {
         window.location.assign('./index.html');
     });
 
-    /*
-        * Cognito User Pool functions
-    */
+    // User pool functions
 
     function register(email, password, onSuccess, onFailure) {
         var dataEmail = {
@@ -64,7 +64,8 @@ else {
             function signUpCallback(err, result) {
                 if (!err) {
                     onSuccess(result);
-                } else {
+                } 
+                else {
                     onFailure(err);
                 }
             }
@@ -79,9 +80,7 @@ else {
     }
 }
 
-/*
- *  Event Handlers
-*/
+// Event handlers
 
 function handleRegister(event) {
     event.preventDefault();
@@ -92,7 +91,6 @@ function handleRegister(event) {
 
     var onSuccess = function registerSuccess(result) {
         var cognitoUser = result.user;
-        console.log('user name is ' + cognitoUser.getUsername());
         var confirmation = ('Registration successful. Please check your email inbox or spam folder for your verification code.');
         if (confirmation) {
             window.location.href = 'verify.html';
@@ -104,7 +102,8 @@ function handleRegister(event) {
     
     if (password === password2) {
         register(email, password, onSuccess, onFailure);
-    } else {
+    } 
+    else {
         alert('Passwords do not match');
     }
 }

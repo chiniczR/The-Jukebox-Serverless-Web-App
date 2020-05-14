@@ -1,25 +1,13 @@
-var at;
+var at; // Authorization Token to be received from Cognito if there is a user logged in
 
-var poolData = {
+var poolData = {    // Cognito user pool data
     UserPoolId: _config.cognito.userPoolId,
     ClientId: _config.cognito.userPoolClientId
 };
 
 var userPool, authToken, username;
 
-function changeLoginBtn() {
-    var loginBtn = document.getElementById('loginBtn')
-    loginBtn.textContent = 'Logout  '
-    var icon = document.createElement('i')
-    icon.classList.add('fas', 'fa-sign-out-alt')
-    loginBtn.appendChild(icon)
-    loginBtn.onclick = (event) => {
-        event.preventDefault();
-        loginBtn.outerHTML = '<a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>'
-        signOut();
-    }
-}
-
+// Cognito must be configured for the site to work properly
 if (!(_config.cognito.userPoolId &&
     _config.cognito.userPoolClientId &&
     _config.cognito.region)) {
@@ -37,43 +25,51 @@ else {
         window.location.reload()
     };
 
+    // Go check with Cognito if there is a user currently logged in here
     authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
         if (cognitoUser) {
             if (cognitoUser.username) {
-                // alert('Found user: ' + cognitoUser.username)
                 username = cognitoUser.username
             }
             cognitoUser.getSession(function sessionCallback(err, session) {
                 if (err) {
                     reject(err);
-                } else if (!session.isValid()) {
+                } 
+                else if (!session.isValid()) {
                     resolve(null);
-                } else {
+                } 
+                else {
                     resolve(session.getIdToken().getJwtToken());
                 }
             });
-        } else {
+        } 
+        else {  // If there is no user logged in here
             resolve(null);
         }
     });
+    // Run the above check and then:
     authToken.then(function setAuthToken(token) {
-        if (token) {
+        if (token) {    // If we got a token => there is a user logged in
             at = token
-            setTimeout(() => {
+            setTimeout(() => {  // Give the document time to load
                 changeLoginBtn()
                 document.getElementById('signupBtn').classList.add('disabled')
                 document.getElementById('signupBtn').onclick = (event) => { event.preventDefault(); }
                 document.getElementById('signupBtn').setAttribute("data-toggle", "tooltip")
                 document.getElementById('signupBtn').setAttribute("title", "You are currently logged in!")
                 document.getElementById('greeting').textContent = 'Logged in as ' + username
+                
+                // Here we are going to retrieve the user's guest-cart, write to their user-
+                // cart the items that weren't there before and then clear their guest-cart
+
                 // Initialize the Amazon Cognito credentials provider
                 AWS.config.region = 'us-east-2'; // Region
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                     IdentityPoolId: 'us-east-2:be4d13f7-7fc3-4b9d-b0b1-ab448dd7271b',
                 });
 
-                // Getting the current user's guest IdentityID (whether logged in or not)
+                // Getting the current user's guest IdentityID
                 var identityId = AWS.config.credentials.identityId;
 
                 // Create the DynamoDB service object
@@ -95,12 +91,13 @@ else {
                 // Make the request
                 ddb.getItem(params, function (err, data) {
                     if (err) alert(err + '\n' + err.getMessage()); // An error occurred
-                    else if (data["Item"]) {
+                    else if (data["Item"]) {    // If there items and we haven't already written them to the user-cart
                         // Get the list of items in the cart
                         var cart = data["Item"]["CartItems"]["NS"]
                         const headers = {
                             Authorization: at // The received authentication token
                         }
+                        // Post the guest-cart to their user-cart
                         const url = _config.api.invokeUrl + '/addcart'
                         $.ajax({
                             method: 'POST',
@@ -110,12 +107,11 @@ else {
                                 Items: cart
                             }),
                             error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                                console.error('Error requesting ride: ', textStatus, ', Details: ', errorThrown);
-                                console.error('Response: ', jqXHR.responseText);
                                 alert('An error occured when adding item to cart:\n' + JSON.stringify(jqXHR));
                             }
                         });
                         delete params["AttributesToGet"]
+                        // Delete their guest-cart
                         ddb.deleteItem(params, function(err1, data1) {
                             if (err1) alert("An error occured when clearing guest cart:\n" + err1)
                         })
@@ -127,4 +123,17 @@ else {
         alert(error);
         window.location.assign('./login.html');
     });
+}
+
+function changeLoginBtn() {
+    var loginBtn = document.getElementById('loginBtn')
+    loginBtn.textContent = 'Logout  '
+    var icon = document.createElement('i')
+    icon.classList.add('fas', 'fa-sign-out-alt')
+    loginBtn.appendChild(icon)
+    loginBtn.onclick = (event) => {
+        event.preventDefault();
+        loginBtn.outerHTML = '<a class="nav-link text-dark" id="loginBtn" href="./login.html">Login <i class="fas fa-sign-in-alt"></i></a>'
+        signOut();
+    }
 }

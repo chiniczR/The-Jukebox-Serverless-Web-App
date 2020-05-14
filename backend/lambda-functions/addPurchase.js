@@ -2,7 +2,7 @@ const randomBytes = require('crypto').randomBytes;
 const AWS = require('aws-sdk');
 
 const ddb = new AWS.DynamoDB();
-const ses = new AWS.SES({region: 'ca-central-1'});
+const ses = new AWS.SES({region: 'us-west-2'});
 
 let sourceEmail = process.env.SRC_EMAIL
 
@@ -18,10 +18,6 @@ exports.handler = (event, context, callback) => {
     // This includes the username as well as other attributes.
     const username = event.requestContext.authorizer.claims['cognito:username'];
 
-    // The body field of the event in a proxy integration is a raw string.
-    // In order to extract meaningful values, we need to first parse this string
-    // into an object. A more robust implementation might inspect the Content-Type
-    // header first and use a different parsing strategy based on that value.
     const requestBody = JSON.parse(event.body);
 
     const items = requestBody.Items.map(i => { return i.toString() })

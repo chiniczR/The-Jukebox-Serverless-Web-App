@@ -5,6 +5,6 @@ window._config = {
         region: 'us-west-2'
     },
     api: {
-        invokeUrl: 'https://41wdgxw3i8.execute-api.us-east-2.amazonaws.com/dev1'
+        invokeUrl: 'https://41wdgxw3i8.execute-api.us-east-2.amazonaws.com/prod'
     }
 };

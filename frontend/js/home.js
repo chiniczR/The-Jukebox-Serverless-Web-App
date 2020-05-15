@@ -64,9 +64,9 @@ else {
                 // cart the items that weren't there before and then clear their guest-cart
 
                 // Initialize the Amazon Cognito credentials provider
-                AWS.config.region = 'us-east-2'; // Region
+                AWS.config.region = _config.identity.idPoolId; // Region
                 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                    IdentityPoolId: 'us-east-2:be4d13f7-7fc3-4b9d-b0b1-ab448dd7271b',
+                    IdentityPoolId: _config.identity.region,
                 });
 
                 // Getting the current user's guest IdentityID

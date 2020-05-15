@@ -14,6 +14,10 @@ exports.handler = (event, context, callback) => {
     // This includes the username as well as other attributes.
     const username = event.requestContext.authorizer.claims['cognito:username'];
 
+    // The body field of the event in a proxy integration is a raw string.
+    // In order to extract meaningful values, we need to first parse this string
+    // into an object. A more robust implementation might inspect the Content-Type
+    // header first and use a different parsing strategy based on that value.
     const requestBody = JSON.parse(event.body);
 
     const items = requestBody.Items
@@ -37,8 +41,9 @@ exports.handler = (event, context, callback) => {
             items.forEach(itemId => {
                 if (cart.includes(itemId.toString())) { 
                     console.log('Item with ID=', itemId, ' is already in the cart of user=', username)
+                } else {
+                    cart.push(itemId.toString());
                 }
-                cart.push(itemId.toString());
             });
             ddb.updateItem({
                 TableName: "JukeboxUserCarts",

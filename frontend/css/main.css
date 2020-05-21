@@ -15,6 +15,11 @@
     src: url("../fonts/Source_Code_Pro/SourceCodePro-Regular.ttf");
 }
 
+@viewport {
+    width: device-width ;
+    zoom: 1.0 ;
+} 
+
 div {
     font-family: 'Raleway';
 }
@@ -312,6 +317,127 @@ a i.fa-sign-out-alt {
     cursor: pointer;
 }
 
+button.btn-transparent.navbar-toggle {
+    display: none;
+}
+
 .no-show {
     display: none;
+}
+
+@media screen and (max-width: 800px) {
+    .bg-home {
+        background-color: #D8BEB1;
+    }
+    .bg-cart {
+        background-color: #FE7D2C;
+    }
+    .bg-login {
+        background-color: #E5AC75;
+    }
+
+    a.logo-a {
+        float: none;
+        font-family: 'Fascinate';
+        vertical-align: middle;
+        color: black;
+        font-size: 2.25vh !important;
+    }
+    img.logo-img {
+        float: left;
+        height: 3.5vh;
+        width: auto;
+    }
+
+    p, h6, a {
+        font-size: 2vh !important;
+    }
+    h5 { font-size: 2.25vh !important; }
+    h4 { font-size: 2.5vh !important; }
+    h3 { font-size: 2.75vh !important; }
+    h2 { font-size: 3vh !important; }
+    h1 { font-size: 3.25vh !important; }
+    .btn-round {
+        border-radius: 15px !important;
+        border-color: transparent !important;
+        font-weight: bold;
+        font-size: 2.75vh !important;
+        width: 17vw !important;
+    }
+    .btn-round.alt {
+        width: 2vw !important;
+        border-color: #f0ad4e !important;
+        font-weight: bold;
+        background: transparent;
+    }
+    .btn-round.btn-sm {
+        font-size: 2vh !important;
+        width: 10vw !important;
+    }
+    .btn-round.small {
+        width: 15vh !important;
+        font-size: 2vh !important;
+        font-weight: bold !important;
+        border: thin #0275d8 solid !important;
+    }
+
+    .title-lg {
+        font-family: 'Fascinate';
+        font-size: 7.5vh !important;
+    }
+
+    #greetingCol, #greeting {
+        display: none !important;
+    }
+
+    button.btn-transparent.navbar-toggle {
+        display: inline-block !important;
+    }
+
+    #menuCol {
+        padding: 0px !important;
+        width: fit-content !important;
+    }
+
+    .btn-transparent.navbar-toggle {
+        font-size: 2vh !important;
+    }
+
+    .container-fluid .row.logo {
+        height: min-content !important;
+    }
+
+    br {
+        display: none;
+    }
+
+    .bg-lightish {
+        width: 35% !important;
+        margin-top: -30vh !important;
+        font-size: 2vh !important;
+    }
+    .all-tab {
+        margin: 0.75vh !important;
+    }
+
+    .bottom-text {
+        margin-left: -3vh !important;
+    }
+
+    .card {
+        max-width: 10rem;
+        margin: 2%;
+    }
+
+    .cover-img {
+        width: 10rem !important;
+        max-height: 13rem !important;
+        text-align: center;
+    }
+    .cover-img-alt {
+        width: 5rem !important;
+        max-height: 8rem !important;
+        text-align: center;
+    }
+
 }
